@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  id        Int      @id @default(autoincrement()) // Primary key
+  title     String                                 // Required text field
+  content   String?                                // Optional field (nullable)
+  createdAt DateTime @default(now())               // Auto timestamp when created
+  updatedAt DateTime @updatedAt                    // Auto update on change
+
+  cards     Card[]
+}
+
+model Card {
+  id        Int @id @default(autoincrement()) // Primary key
+  content   String
+  position  Int                              // for drag & drop ordering
+  boardId   Int
+  board     Board    @relation(fields: [boardId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

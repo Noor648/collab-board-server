@@ -1,8 +1,10 @@
-const express = require('express');
+import express from "express"
+import getMessage from '../controllers/sample.js';
+
 const router = express.Router();
-const { getMessage } = require('../controllers/sample');
 
 // GET /api/message
 router.get('/message', getMessage);
 
-module.exports = router;
+export default router;
+
