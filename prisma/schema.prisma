@@ -19,4 +19,16 @@ model Board {
   content   String?                                // Optional field (nullable)
   createdAt DateTime @default(now())               // Auto timestamp when created
   updatedAt DateTime @updatedAt                    // Auto update on change
+
+  cards     Card[]
+}
+
+model Card {
+  id        Int @id @default(autoincrement()) // Primary key
+  content   String
+  position  Int                              // for drag & drop ordering
+  boardId   Int
+  board     Board    @relation(fields: [boardId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
