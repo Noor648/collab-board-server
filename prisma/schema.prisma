@@ -13,3 +13,11 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Board {
+  id        Int      @id @default(autoincrement()) // Primary key
+  title     String                                 // Required text field
+  content   String?                                // Optional field (nullable)
+  createdAt DateTime @default(now())               // Auto timestamp when created
+  updatedAt DateTime @updatedAt                    // Auto update on change
+}
