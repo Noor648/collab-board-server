@@ -3,6 +3,7 @@ import cors from "cors";
 import { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
 import indexRoutes from './routes/index.js';
+import prisma from './lib/prisma.js'
 
 dotenv.config();
 
@@ -17,18 +18,33 @@ app.use(express.json());
 app.use('/api', indexRoutes);
 
 // Start http server
-const server = app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
-});
+async function startServer() {
+  try {
 
-// Web socket server
-// Using server instance to run them at the same port as server
-const wss = new WebSocketServer({server})
+    // ✅ try connecting to PostgreSQL
+    await prisma.$connect();
+    console.log("✅ Database connection established!");
 
-wss.on("connection", (ws) => {
-  console.log("🔌 Client connected");
-  ws.on("message", (data)=> {
-    console.log("data from client %s:", data);
-    ws.send("Handshake protocol");
-  })
-})
+    // ✅ try starting server
+    const server = app.listen(PORT, () => {
+      console.log(`✅ Server running at http://localhost:${PORT}`);
+    });
+
+    // ✅ try starting Web socket server
+    // Using server instance to run them at the same port as server
+    const wss = new WebSocketServer({server})
+
+    wss.on("connection", (ws) => {
+      console.log("🔌 Client connected");
+      ws.on("message", (data)=> {
+        console.log("data from client %s:", data);
+        ws.send("Handshake protocol");
+      })
+    })
+
+  } catch(err) {
+
+  }
+}
+
+startServer();
